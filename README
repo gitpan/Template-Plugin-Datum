@@ -1,0 +1,28 @@
+NAME
+    Template::Plugin::Datum - TT2 plugin that converts international date
+    format to German date format
+
+SYNOPSIS
+      [% USE Datum %]
+
+      von: [% von | datum %]
+      bis: [% '2003-12-31' | datum %]
+
+DESCRIPTION
+    This plugin converts international date format (year-month-day) to
+    German date format (day.month.year).
+
+NOTE
+    It does not check the date if it is correct!
+
+    MySQL returns international date format by default.
+
+AUTHOR
+    Uwe Voelker <uwe.voelker@gmx.de>
+
+    This library is free software; you can redistribute it and/or modify it
+    under the same terms as Perl itself.
+
+SEE ALSO
+    Template
+
