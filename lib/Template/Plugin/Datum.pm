@@ -1,5 +1,5 @@
 package Template::Plugin::Datum;
-$VERSION = 0.01;
+$VERSION = 0.02;
 
 use strict;
 use base 'Template::Plugin';
@@ -15,13 +15,30 @@ sub new {
 sub datum {
     my $text = shift || '';
 
-    # split on '-' or '.'
-    my @date = split(/[-.]/, $text);
+    my @date = ();
+    my @time = ();
+
+    # 8 digits?
+    if ($text =~ /^(\d{4})(\d{2})(\d{2})$/) {
+        @date = ($1, $2, $3);
+    } elsif ($text =~ /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/) {
+        @date = ($1, $2, $3);
+        @time = ($4, $5, $6);
+    } else {
+        # split on '-', '.' or '/'
+        @date = split(/[-\/.]/, $text);
+    }
 
     # wrong?
     return '' unless (scalar @date == 3);
 
-    return join('.', reverse @date);
+    my $output = join('.', reverse @date);
+
+    if (scalar @time == 3) {
+        $output .= ' '.join(':', @time);
+    }
+
+    return $output;
 }
 
 
@@ -37,13 +54,33 @@ date format to German date format
 
   [% USE Datum %]
 
-  von: [% von | datum %]
-  bis: [% '2003-12-31' | datum %]
+  von: [% '20030101' | datum %]   -> 01.01.2003
+  bis: [% '2003-12-31' | datum %] -> 31.12.2003
+
+  Zeitstempel: [% '20031212143000' | datum %] -> 12.12.2003 14:30:00
 
 =head1 DESCRIPTION
 
 This plugin converts international date format (year-month-day) to
 German date format (day.month.year).
+
+Recognized formats are:
+
+=over 2
+
+=item *
+
+yyyy-mm-dd (2003-12-31)
+
+=item *
+
+yyyymmdd (20031231)
+
+=item *
+
+yyyymmddHHMMSS (20031231143000) date and time
+
+=back
 
 =head1 NOTE
 
